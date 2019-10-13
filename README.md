@@ -1,2 +1,2 @@
-# GuardMinecraftFR
-Bonjour, je voudrais vous présenter un script que j'ai crée qui se nomme: "Guard"
+1 Pour que Guard marche il faut installer le plugin "Skript", "skQuery" et "WildSkript"
+
