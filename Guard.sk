@@ -1,0 +1,207 @@
+#GuardInfo
+
+command /guard [<text>]:
+	permission: guard.info.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	trigger:
+		if arg 1 is not set:
+			message "&7&l[&4&lGuard&7&l] &6est un skript développé par &8Etoile_Bleu"
+			wait 1 second
+			message "&6Je suis un très jeune skripteur qui viens de débuter pour signaler des &cproblèmes/bugs:"
+			message "&aetoile.bleu.guard@gmail.com"
+			wait 1 second
+			message "&6Ce skript consiste à modérer le chat et faire des commandes qui sont utiles pour administrer &6:"
+			wait 1 second
+			message "&0________________________________________________________________________________"
+			wait 2 second
+			message "&8AntiSpam"
+			message "&8ChatMute"
+			message "&8ChatClear"
+			message "&8Broadcast"
+			message "&8Setspawn"
+			wait 1 second
+			message "&0________________________________________________________________________________"
+			wait 2 second
+			message "&6Faites &8/ghelp &6pour connaitre toutes les commandes de &7&l[&4&lGuard&7&l]"
+			message "&6Faites &8/gperm &6pour connaitre toutes les permissions de &7&l[&4&lGuard&7&l]"
+			message "&aLes permissions de &7&l[&4&lGuard&7&l] &asont comptatibles avec GroupManager et Essentials ;)"
+			stop trigger
+command /ghelp [<text>]:
+	permission: guard.viewcommands.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	trigger:
+		message "&0________________________________________________________________________________"
+		message "&7/gschat &8> &aoff &8> &efaible &8> &6moyen &8>  &cfort"
+		message "&7/gschat &6vous permet d'empêcher les joueurs de spam &8(envoyer plein de messages en peu de temps)"
+		message "&7/gschat &6peut être réglé sur &efaible &8(3 secondes d'intervalle) &6moyen &8(8 secondes d'intervalle) &4fort &8(12 secondes d'intervale) ou &2désactivé"
+		message "&0________________________________________________________________________________"
+		message "&7/gchat mute &6vous permet de muter tout le chat et peut être régler sur &4on &6ou &2off"
+		message "&7/gchat clear &6 vous permet de retirer tous les messages du cheat"
+		message "&0________________________________________________________________________________"
+		message "&7/broadcast &6ou &7/bc &6vous permet de faire une annonce à tous les joueurs"
+
+
+
+
+			
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#GuardAntiSpam
+
+command /gschat [<text>]:
+	permission: gchat.spam.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	trigger:
+		if arg 1 is not set:
+			message "&7&l[&4&lGuard&7&l] &8> &7/gschat &8> &aoff &8> &efaible &8> &6moyen &8>  &cfort"
+		if arg 1 is "off":
+			clear {timerchat.guard}
+			broadcast "&7&l[&4&lGuard&7&l] &8> &cAntiSpam &8> &aDésactivé"
+		if arg 1 is "faible":
+			set {timerchat.guard} to false
+			broadcast "&7&l[&4&lGuard&7&l] &8> &cAntiSpam &8> &eFaible"
+		if arg 1 is "moyen":
+			set {timerchat.guard} to true
+			broadcast "&7&l[&4&lGuard&7&l] &8> &cAntiSpam &8> &6Moyen"
+		if arg 1 is "fort":
+			set {timerchat.guard} to 3
+			broadcast "&7&l[&4&lGuard&7&l] &8> &cAntiSpam &8> &4Fort"
+
+on chat:
+	if player doesn't have permission "chat.guard.spam":
+		if {timerchat.guard} is false:
+			set {_diff} to difference between {Chat.%player%} and now
+			if {_diff} is smaller than 3 seconds:
+				message "&7&l[&4&lGuard&7&l] &8> &c&lAntiSpam &8> &eFaible &8> &cVous ne pouvez pas envoyer plusieurs messages à la suite"
+				cancel event
+				stop
+			set {Chat.%player%} to now
+		if {timerchat.guard} is true:
+			set {_diff} to difference between {Chat.%player%} and now
+			if {_diff} is smaller than 8 seconds:
+				message "&7&l[&4&lGuard&7&l] &8> &c&lAntiSpam &8> &6Moyen &8> &cVous ne pouvez pas envoyer plusieurs messages à la suite"
+				cancel event
+				stop
+			set {Chat.%player%} to now
+		if {timerchat.guard} is 3:
+			set {_diff} to difference between {Chat.%player%} and now
+			if {_diff} is smaller than 12 seconds:
+				message "&7&l[&4&lGuard&7&l] &8> &c&lAntiSpam &8> &4Fort &8>  &cVous ne pouvez pas envoyer plusieurs messages à la suite"
+				cancel event
+				stop
+			set {Chat.%player%} to now
+
+
+#GuardChatMute
+
+
+command /gchat [<text>] [<text>]:
+	permission: gchat.mute.clear.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	aliases: gc
+	trigger:
+		if arg 1 is not set :
+			message "&7&l[&4&lGuard&7&l] &8> &6/chat &8> &7Mute &8> &7Clear" to player
+			stop trigger
+		if arg 1 is "clear":
+			if arg 2 is set:
+				message "&7&l[&4&lGuard&7&l] &8> &6/chat &8> &7Mute &8> &7Clear" to player
+				stop trigger
+				
+			loop 200 times:
+				broadcast ""
+			broadcast "&7&l[&4&lGuard&7&l] &8> &6Chat &8> &aClear par %player%"
+			stop trigger
+					
+		if arg 1 is "mute":
+			if arg 2 is "on":
+				set {muteall.on} to true
+				broadcast "&7&l[&4&lGuard&7&l] &8>  &6Chat &8> &cMuté"
+			if arg 2 is "off":
+				set {muteall.on} to false
+				broadcast "&7&l[&4&lGuard&7&l] &8>  &6Chat &8> &2Libéré"
+			
+on chat:
+	if {muteall.on} is true:
+		if player doesn't have permission "chat.mute.guard":
+			cancel event
+			message "&7&l[&4&lGuard&7&l] &8> &cErreur &8> &6Chat &8> &cMuté" to player
+
+
+#GuardBroadcast
+
+command /broadcast [<text>]:
+	permission: bc.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	description: &bCrée un message à tous les joueurs.
+	aliases: bc, b
+	trigger:
+		if arg 1 is not set:
+			message "&7&l[&4&lGuard&7&l] &8> &6/broadcast &8> &7 [<message>]"
+			stop trigger
+		if arg 1 is set:
+			message "&8&l[&6Annonce&8&l] &8> &2%arg 1%"
+			stop trigger
+
+
+
+#GuardSpawn
+
+command /gsetspawn:
+	permission: gsetspawn.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	trigger:
+		set {spawnpoint.guard} to player's location
+		message "&7&l[&4&lGuard&7&l] &8> &2Spawn &8> &aSpawn définie"
+
+command /gspawn:
+	permission: gspawn.guard
+	permission message: &7&l[&4&lGuard&7&l] &8> &cErreur &8> &cTu n'as pas les permissions
+	trigger:
+		message "&7&l[&4&lGuard&7&l] &8> &2Spawn &8> &aTéléportation dans 3 secondes"
+		wait 1 second
+
+		message "&7&l[&4&lGuard&7&l] &8> &2Spawn &8> &aTéléportation dans 2 secondes"
+		wait 1 second
+
+		message "&7&l[&4&lGuard&7&l] &8> &2Spawn &8> &aTéléportation dans 1 seconde"
+		wait 1 second
+		teleport player to {spawnpoint.guard}
+		message "&7&l[&4&lGuard&7&l] &8> &2Spawn &8> &aTu es au Spawn"
+	 
+
+
+
+
+
+
+
+
+
+
+
+
+
+#GuardFiltre 
+			
+on chat:
+	if message contains "ta gueule" or "pute" or "con" or "connard" or "enculé" or "fuck":
+		cancel event 
+		message "&c&lAnti Insulte > %player% ,merci de ne pas insulter !"
+
+		
